@@ -1,13 +1,17 @@
 <template>
-  <div id="home">
+  <div id="home" class="wrapper">
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-swiper :banners="banners" />
-    <recommend-view :recommends="recommends" />
-    <feature-view />
-    <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick" />
-    <goods-list :goods="showGoods" />
+
+    <scroll class="content" ref="scroll">
+      <home-swiper :banners="banners" />
+      <recommend-view :recommends="recommends" />
+      <feature-view />
+      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick" />
+      <goods-list :goods="showGoods" />
+    </scroll>
+
 
   </div>
 </template>
@@ -17,15 +21,16 @@
   import HomeSwiper from './childComps/HomeSwiper.vue'
   import RecommendView from './childComps/RecommendView.vue'
   import FeatureView from './childComps/FeatureView.vue'
-
   import NavBar from 'components/common/navbar/NavBar';
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
+  import Scroll from 'components/common/scroll/Scroll'
 
   import {
     getHomeMultidata,
     getHomeGoods
   } from 'network/home';
+
 
 
   export default {
@@ -36,7 +41,8 @@
       HomeSwiper,
       RecommendView,
       FeatureView,
-      GoodsList
+      GoodsList,
+      Scroll,
     },
     data() {
       return {
@@ -65,6 +71,12 @@
       this.getHomeGoods('sell')
 
     },
+    mounted() {
+
+    },
+
+
+
     methods: {
       // 事件监听相关的方法
       tabClick(index) {
@@ -86,6 +98,7 @@
         getHomeMultidata().then(res => {
           // this.result = res;
           this.banners = res.data.banner.list;
+          //console.log(res.data.banner.list);
           this.recommends = res.data.recommend.list;
         })
       },
@@ -103,7 +116,9 @@
 
 <style scoped>
   #home {
-    padding-top: 44px
+    /* padding-top: 44px; */
+    height: 100vh;
+    position: relative;
   }
 
   .home-nav {
@@ -122,4 +137,25 @@
     top: 44px;
     z-index: 9;
   }
+
+
+  .content {
+    overflow: hidden;
+
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0;
+  }
+
+  /* .content {
+    height:calc(100% - 93px);
+    overflow:hidden;
+    margin-top: 44px;
+  } */
+
+  /* .wrapper {
+    height: 100vh;
+  } */
 </style>
