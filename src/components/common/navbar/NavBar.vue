@@ -25,7 +25,8 @@
     box-shadow: 0 1px 1px rgba(100, 100, 100, .1)
   }
 
-  .left .right {
+  .left,
+  .right {
     width: 60px;
   }
 

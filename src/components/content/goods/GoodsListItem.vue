@@ -1,7 +1,7 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <div>
-      <img :src="goodsItem.show.img" alt="">
+      <img :src="goodsItem.show.img" alt="" @load="imageLoad">
       <div class="goods-info">
         <p>{{goodsItem.title}}</p>
         <span class="price">{{goodsItem.price}}</span>
@@ -20,14 +20,27 @@
           return {}
         },
       }
+    },
+    methods: {
+      imageLoad() {
+        this.$bus.$emit('itemImageLoad')
+      },
+      itemClick() {
+        this.$router.push('/detail/' + this.goodsItem.iid)
+        // this.$router.push({
+        //   path: '/detail',
+        //   query: {
 
+        //   }
+        // })
+      }
     }
   }
 </script>
 <style scoped>
   .goods-item {
     padding-bottom: 40px;
-    position:relative;
+    position: relative;
     width: 48%;
   }
 
