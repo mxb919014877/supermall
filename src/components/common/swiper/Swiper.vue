@@ -1,10 +1,8 @@
 <template>
   <div id="hy-swiper">
-    <!-- 这个位置渲染 -->
     <div class="swiper" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
       <slot></slot>
     </div>
-    <!-- end渲染 -->
     <slot name="indicator">
     </slot>
     <div class="indicator">
@@ -47,24 +45,23 @@
       }
     },
     mounted: function () {
-      console.log(document.querySelector('.swiper'))
       // 1.操作DOM, 在前后添加Slide
       setTimeout(() => {
         this.handleDom();
 
         // 2.开启定时器
         this.startTimer();
-      }, 100)
+      }, 200)
     },
     methods: {
-		  /**
+      /**
        * 定时器操作
        */
       startTimer: function () {
         this.playTimer = window.setInterval(() => {
           this.currentIndex++;
           this.scrollContent(-this.currentIndex * this.totalWidth);
-        }, 2000)
+        }, this.interval)
       },
       stopTimer: function () {
         window.clearInterval(this.playTimer);
