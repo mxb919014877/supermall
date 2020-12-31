@@ -8,6 +8,7 @@
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
       <detail-param-info :param-info="paramInfo" />
       <detail-comment-info :comment-info="commentInfo" />
+      <goods-list :goods="recommends" />
     </scroll>
   </div>
 </template>
@@ -21,12 +22,23 @@
   import DetailCommentInfo from './childComps/DetailCommentInfo.vue'
 
   import Scroll from 'components/common/scroll/Scroll'
+  import GoodsList from 'components/content/goods/GoodsList'
 
 
-  import { getDetail, Goods, Shop, GoodsParam } from 'network/detail'
+  import {
+    getDetail,
+    getRecommend,
+    Goods,
+    Shop,
+    GoodsParam
+  } from 'network/detail'
+
+  import { debounce } from 'common/utils'
+  import { itemListenerMixin } from 'common/mixin'
 
   export default {
     name: 'Detail',
+    mixins: [itemListenerMixin],
     data() {
       return {
         iid: null,
@@ -35,7 +47,9 @@
         shop: {},
         detailInfo: {},
         paramInfo: {},
-        commentInfo: {}
+        commentInfo: {},
+        recommends: [],
+
       }
     },
     components: {
@@ -47,6 +61,7 @@
       DetailParamInfo,
       DetailCommentInfo,
       Scroll,
+      GoodsList
     },
     created() {
       // 1.保存传入的iid
@@ -54,7 +69,7 @@
 
       // 2.根据iid请求详情数据
       getDetail(this.iid).then(res => {
-        console.log(res);
+        // console.log(res);
         const data = res.result;
         // 1.获取顶部的图片轮播数据
         this.topImages = data.itemInfo.topImages
@@ -76,14 +91,24 @@
           this.commentInfo = data.rate.list[0]
         }
       })
+
+      // 3.请求推荐数据
+      getRecommend().then((res) => {
+        // console.log(res);
+        this.recommends = res.data.list
+      })
     },
     methods: {
       imageLoad() {
         this.$refs.scroll.refresh()
       }
+    },
+    mounted() {
+
+    },
+    destroyed() {
+      this.$bus.$off('itemImgLoad', this.itemImgListener)
     }
-
-
   };
 </script>
 <style scoped>
@@ -102,5 +127,6 @@
 
   .content {
     height: calc(100% - 44px);
+    overflow: hidden;
   }
 </style>
