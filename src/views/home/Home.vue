@@ -120,8 +120,13 @@
             this.currentType = 'sell'
             break
         }
-        this.$refs.tabControl1.currentIndex = index;
-        this.$refs.tabControl2.currentIndex = index;
+
+        // 让两个TabControl的currentIndex保持一致
+        if (this.$refs.tabControl1 !== undefined) {
+          this.$refs.tabControl1.currentIndex = index;
+          this.$refs.tabControl2.currentIndex = index;
+        }
+
       },
 
       backClick() {

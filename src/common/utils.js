@@ -1,5 +1,5 @@
 /* 抖动函数，延迟数据请求，减缓服务器压力 */
-export function debounce(func, delay) {
+export function debounce(func, delay=50) {
   let timer = null;
   return function (...args) {
     if (timer) clearTimeout(timer);
