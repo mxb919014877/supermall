@@ -12,6 +12,9 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo" />
       <goods-list ref="recommend" :goods="recommends" />
     </scroll>
+
+    <detail-bottom-bar />
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
 <script>
@@ -22,6 +25,8 @@
   import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue'
   import DetailParamInfo from './childComps/DetailParamInfo.vue'
   import DetailCommentInfo from './childComps/DetailCommentInfo.vue'
+  import DetailBottomBar from './childComps/DetailBottomBar.vue'
+
 
   import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goods/GoodsList'
@@ -36,11 +41,11 @@
   } from 'network/detail'
 
   import { debounce } from 'common/utils'
-  import { itemListenerMixin } from 'common/mixin'
+  import { itemListenerMixin, backTopMixin } from 'common/mixin'
 
   export default {
     name: 'Detail',
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, backTopMixin],
     data() {
       return {
         iid: null,
@@ -53,7 +58,8 @@
         recommends: [],
         themeTopYs: [],
         getThemeTOPY: null,
-        currentIndex: 0
+        currentIndex: 0,
+
       }
     },
     components: {
@@ -64,8 +70,9 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
+      DetailBottomBar,
       Scroll,
-      GoodsList
+      GoodsList,
     },
     created() {
       // 1.保存传入的iid
@@ -139,6 +146,7 @@
         // console.log(index);
         this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
       },
+
       contentScroll(position) {
         // 1.获取Y值
         const positionY = -position.y
@@ -162,6 +170,9 @@
           //   this.$refs.nav.currentIndex = this.currentIndex
           // }
         }
+
+        // 3.是否显示回到顶部
+        this.listenShowBackTop(position)
       }
     },
     mounted() {
@@ -187,7 +198,7 @@
   }
 
   .content {
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 53px);
     overflow: hidden;
   }
 </style>
