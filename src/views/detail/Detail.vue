@@ -4,6 +4,8 @@
     <!-- 属性: topImages 传入值:top-images -->
 
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+
+      <div>{{$store.state.cartList.length}}</div>
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
@@ -13,8 +15,10 @@
       <goods-list ref="recommend" :goods="recommends" />
     </scroll>
 
-    <detail-bottom-bar />
+
     <back-top @click.native="backClick" v-show="isShowBackTop" />
+    <detail-bottom-bar @addCart="addToCart" class="detail-bottom" />
+    <!-- <toast :message="message" :show="show" /> -->
   </div>
 </template>
 <script>
@@ -30,6 +34,7 @@
 
   import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goods/GoodsList'
+  // import Toast from 'components/common/toast/Toast'
 
 
   import {
@@ -42,6 +47,8 @@
 
   import { debounce } from 'common/utils'
   import { itemListenerMixin, backTopMixin } from 'common/mixin'
+
+  import { mapActions } from 'vuex'
 
   export default {
     name: 'Detail',
@@ -59,7 +66,8 @@
         themeTopYs: [],
         getThemeTOPY: null,
         currentIndex: 0,
-
+        // message: '',
+        // show: false
       }
     },
     components: {
@@ -73,6 +81,7 @@
       DetailBottomBar,
       Scroll,
       GoodsList,
+      // Toast
     },
     created() {
       // 1.保存传入的iid
@@ -135,6 +144,7 @@
       }, 100)
     },
     methods: {
+      ...mapActions(['addCart']),
       imageLoad() {
         // this.newRefresh()
         console.log("获取到的图片数据准备刷新");
@@ -173,7 +183,43 @@
 
         // 3.是否显示回到顶部
         this.listenShowBackTop(position)
+
+
+      },
+      addToCart() {
+
+        // 1.获取购物车需要展示的信息
+        const product = {}
+        product.image = this.topImages[0]
+        product.title = this.goods.title;
+        product.desc = this.goods.desc;
+        product.price = this.goods.realPrice
+        product.iid = this.iid;
+
+        // 2.将商品添加到购物车中(1.Promise  2.mapActions)
+        // this.$store.commit('addCart', product)
+
+        this.addCart(product).then((res) => {
+          // this.show = true;
+          // this.message = res;
+          // setTimeout(() =>{
+          //   this.show = false;
+          //   this.message = ''
+          // },1500)
+          this.$toast.show()
+        })
+        // this.$store.dispatch('addCart', product).then(res => {
+        //   console.log(res);
+        // })
+        // .then(res => {
+        //   console.log(res);
+
+        // })
+
+        // 3.显示购物车成功
+
       }
+
     },
     mounted() {
 
